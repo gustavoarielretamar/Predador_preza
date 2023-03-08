@@ -81,63 +81,121 @@ def vecinos_de(t, coord, debug=False):
 
 #%% BUSAR ANIMALES ADYACENTES:
 def buscar_adyacente(t, coord, objetivo, debug = False):
-    adyacentes = vecinos_de(t, coord, True)
+    adyacentes = vecinos_de(t, coord)
     respuesta = []
-    l=0
+    j=0
     for i in range (len(adyacentes)):
-        if t[adyacentes[i]] == objetivo and l==0:
+        if t[adyacentes[i]] == objetivo and j==0:
             respuesta.append(adyacentes[i])
-            l += 1
+            j += 1
     if debug:
         print(respuesta)
     return respuesta
+
+#%% ALIMENTARSE:
+def alimentar(t, coord, debug = False):
+    l = 0
+    if t[coord] == "L" and l==0:
+        comer = buscar_adyacente(t, coord, "A")
+        t[coord] = " "
+        t[comer[0]] = "L"
+        l += 1
+    if debug:
+        print(t)
+    return t
+
+#%% REPRODUCIRSE:
+def reproducir(t, coord, debug = False):
+    l=0
+    if t[coord] == "L" and l==0:
+        pareja = buscar_adyacente(t, coord, "L")
+        if pareja != []:
+            decendencia = buscar_adyacente(t, coord, " ")
+            t[(decendencia[0])] = "L"
+            l += 1
+    if t[coord] == "A" and l==0:
+        pareja = buscar_adyacente(t, coord, "A")
+        if pareja != []:
+            decendencia = buscar_adyacente(t, coord, " ")
+            t[(decendencia[0])] = "A"
+            l += 1
+    if debug:
+        print(t)
+    return t
 
 #%% MOVERSE:
 def mover(t, coord, debug = False):
-    if t[coord] == "A" or t[coord] == "L":
+    l=0
+    if t[coord] == "A" and l==0:
         moverse = buscar_adyacente(t, coord, " ")
-        moverse = t[coord]
         t[coord] = " "
+        t[moverse[0]]= "A"
+        l += 1
+    if t[coord] == "L" and l==0:
+        moverse = buscar_adyacente(t, coord, " ")
+        t[(moverse[0])] = "L"
+        t[coord] = " "
+        l += 1
     if debug:
-        print(respuesta)
-    return respuesta
+        print(t)
+    return t
+
+#%% FASE ALIMENTARSE:
+def fase_alimentar(t, debug = False):
+    cantidad_filas = t1.shape[0]
+    cantidad_columnas = t1.shape[1]
+    for i in range(1, cantidad_filas-1):
+        for j in range(1, cantidad_columnas-1):
+            alimentar(t1, (j,i))
+    print(t)
+    return t
+
+#%% FASE REPRODUCIRSE:
+def fase_reproducir(t, debug = False):
+    cantidad_filas = t1.shape[0]
+    cantidad_columnas = t1.shape[1]
+    for i in range(1, cantidad_filas - 1):
+        for j in range(1, cantidad_columnas - 1):
+            reproducir(t1, (i,j))
+    if debug:
+        print(t)
+    return t
+
+#%% FASE DE MOVERSE:
+def fase_mover(t, debug = False):
+    cantidad_filas = t1.shape[0]
+    cantidad_columnas = t1.shape[1]
+    for i in range(1, cantidad_filas - 1):
+        for j in range(1, cantidad_columnas - 1):
+            mover(t1, (i,j))
+    if debug:
+        print(t)
+    return t
+
+#%% CICLO:
+def evolucionar(t, debug = False):
+    fase_alimentar(t)
+    # fase_reproducir(t)
+    # fase_mover(t)
+    if debug:
+        print(t)
+    return t
+
+#%% CICLO EN EL TIEMPO:
+def evolucionar_en_el_tiempo(t, k, debug = False):
+    i=0
+    while i < k:
+        evolucionar(t, True)
+        i += 1
 # %% LLAMADAS:
-    
 t1 = crear_tablero(3,4)
 bordes(t1)
-agregar_animales(t1, True)
-mover(t1, 1,1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+agregar_animales(t1)
+# buscar_adyacente(t1, (1,1), " ", True)
+# alimentar(t1, (1,1), True)
+# reproducir(t1,(1,3), True)
+# mover(t1, (1,1), True)
+# fase_alimentar(t1, True)
+# fase_reproducir(t1, True)
+# fase_mover(t1, True)
+# evolucionar(t1, True)
